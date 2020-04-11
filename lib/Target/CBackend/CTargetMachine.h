@@ -30,12 +30,22 @@ public:
 
 class CTargetSubtargetInfo : public TargetSubtargetInfo {
 public:
+#if LLVM_VERSION_MAJOR <= 8
   CTargetSubtargetInfo(const TargetMachine &TM, const Triple &TT, StringRef CPU,
                        StringRef FS)
       : TargetSubtargetInfo(TT, CPU, FS, ArrayRef<SubtargetFeatureKV>(),
                             ArrayRef<SubtargetFeatureKV>(), nullptr, nullptr,
                             nullptr, nullptr, nullptr, nullptr, nullptr),
         Lowering(TM) {}
+#else
+  CTargetSubtargetInfo(const TargetMachine &TM, const Triple &TT, StringRef CPU,
+                       StringRef FS)
+      : TargetSubtargetInfo(TT, CPU, FS, ArrayRef<SubtargetFeatureKV>(),
+                            ArrayRef<SubtargetSubTypeKV>(), nullptr, nullptr,
+                            nullptr, nullptr, nullptr, nullptr),
+        Lowering(TM) {}
+#endif
+
   bool enableAtomicExpand() const override;
   const TargetLowering *getTargetLowering() const override;
   const CTargetLowering Lowering;
